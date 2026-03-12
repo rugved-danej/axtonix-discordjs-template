@@ -1,0 +1,39 @@
+{
+  "name": "axtonix-discordjs-template",
+  "version": "1.0.0",
+  "description": "A professional Discord.js bot template with advanced features",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "pm2:start": "pm2 start ecosystem.config.js",
+    "pm2:start:dev": "pm2 start ecosystem.config.js --env development",
+    "pm2:stop": "pm2 stop discord-bot",
+    "pm2:restart": "pm2 restart discord-bot",
+    "pm2:delete": "pm2 delete discord-bot",
+    "pm2:logs": "pm2 logs discord-bot",
+    "pm2:monitor": "pm2 monit",
+    "pm2:list": "pm2 list",
+    "pm2:save": "pm2 save",
+    "pm2:flush": "pm2 flush"
+  },
+  "keywords": [
+    "discord",
+    "bot",
+    "discord.js",
+    "template"
+  ],
+  "author": "Rugved",
+  "license": "ISC",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=24.11.1"
+  },
+  "dependencies": {
+    "discord.js": "^14.25.0",
+    "mongoose": "^9.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
+  }
+}
