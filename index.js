@@ -1,7 +1,7 @@
 const { Client, GatewayIntentBits, Partials, Collection } = require("discord.js");
 const logger = require("./utils/logger");
 const config = require("./configs/client.json");
-
+//test
 const { loadCommands } = require("./handlers/commandHandler");
 const { loadSlashCommands, syncSlashCommands } = require("./handlers/slashCommandHandler");
 const { loadEvents } = require("./handlers/eventHandler");
