@@ -1,9 +1,9 @@
-const mongoose = require("mongoose");
+const { createClient } = require("@supabase/supabase-js");
 const logger = require("../utils/logger");
 const config = require("../configs/client.json");
 
 /**
- * Connects to the MongoDB database using Mongoose.
+ * Connects to the PostgreSQL database using Supabase.
  * @param {Client} client - The Discord.js client instance
  */
 async function connectDatabase(client) {
@@ -12,32 +12,28 @@ async function connectDatabase(client) {
     return;
   }
 
-  if (!config.database.uri || config.database.uri.includes("<user>")) {
-    logger.error("Database URI is missing or unconfigured in configs/client.json!");
+  if (!config.database.supabaseUrl || config.database.supabaseUrl === "YOUR_SUPABASE_URL" || !config.database.supabaseKey) {
+    logger.error("Supabase URL or Key is missing or unconfigured in configs/client.json!");
     return;
   }
 
-  logger.info("Attempting to connect to MongoDB...");
+  logger.info("Attempting to initialize Supabase client...");
 
   try {
-    await mongoose.connect(config.database.uri, {
-      serverSelectionTimeoutMS: 5000,
+    // Initialize the Supabase client
+    const supabase = createClient(config.database.supabaseUrl, config.database.supabaseKey, {
+      auth: {
+        persistSession: false // Not needed for a backend bot
+      }
     });
 
-    logger.success("✅ Successfully connected to MongoDB Atlas!");
+    // Attach to the Discord client so it can be accessed in commands/events
+    client.supabase = supabase;
 
-    client.mongoose = mongoose;
+    logger.success("✅ Successfully initialized Supabase client!");
   } catch (error) {
-    logger.error(`❌ Initial MongoDB connection failed: ${error.message}`);
+    logger.error(`❌ Supabase initialization failed: ${error.message}`);
   }
-
-  mongoose.connection.on("error", (err) => {
-    logger.error(`🚨 MongoDB connection error: ${err.message}`);
-  });
-
-  mongoose.connection.on("disconnected", () => {
-    logger.warn("🔌 MongoDB disconnected. Will attempt reconnect if needed.");
-  });
 }
 
 module.exports = { connectDatabase };

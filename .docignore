@@ -1,0 +1,7 @@
+# Auto-generated docgen ignore file
+[ALL].git
+[ALL]node_modules
+[ALL]__pycache__
+[ALL]vendor
+[ALL]build
+[ALL]dist
