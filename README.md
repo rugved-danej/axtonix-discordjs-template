@@ -57,10 +57,12 @@ Edit the file configs/client.json:
   "partials": ["Message", "Channel", "Reaction"],
   "database": {
     "enabled": true,
-    "uri": "YOUR_MONGODB_URI"
+    "supabaseUrl": "YOUR_SUPABASE_URL",
+    "supabaseKey": "YOUR_SUPABASE_KEY"
   },
-  "guildOnlyMode": true,
-  "allowedGuilds": ["YOUR_GUILD_ID"]
+  "guildOnlyMode": false,
+  "allowedGuilds": ["YOUR_GUILD_ID"],
+  "errorChannel": "YOUR_ERROR_CHANNEL_ID_HERE"
 }
 ```
 

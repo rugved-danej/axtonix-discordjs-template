@@ -1,5 +1,6 @@
 const logger = require("../utils/logger");
 const config = require("../configs/client.json");
+const { sendErrorLog } = require("../utils/errorHandler");
 
 module.exports = {
   name: "messageCreate",
@@ -92,6 +93,9 @@ module.exports = {
       await command.execute(message, args, client);
     } catch (error) {
       logger.error(`Error executing ${commandName}: ${error.message}`);
+      
+      await sendErrorLog(client, error, `Prefix Command: ${commandName} (User: ${message.author.tag})`);
+      
       message
         .reply({
           content: "❌ There was an error executing this command!",

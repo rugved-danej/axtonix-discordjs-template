@@ -1,11 +1,11 @@
 const { Client, GatewayIntentBits, Partials, Collection } = require("discord.js");
 const logger = require("./utils/logger");
 const config = require("./configs/client.json");
-//test
 const { loadCommands } = require("./handlers/commandHandler");
 const { loadSlashCommands, syncSlashCommands } = require("./handlers/slashCommandHandler");
 const { loadEvents } = require("./handlers/eventHandler");
 const { connectDatabase } = require("./handlers/databaseHandler");
+const { sendErrorLog } = require("./utils/errorHandler");
 
 const client = new Client({
   intents: [
@@ -37,13 +37,10 @@ async function initializeBot() {
     }
 
     await client.login(token);
-
     await connectDatabase(client);
-
     await syncSlashCommands(client);
 
     logger.success("Bot initialization completed successfully!");
-    logger.info(`Bot is configured to work in all guilds`);
   } catch (error) {
     logger.error(`Failed to initialize bot: ${error.message}`);
     console.error(error);
@@ -51,15 +48,19 @@ async function initializeBot() {
   }
 }
 
+// Global process listeners for high-level error reporting
 process.on("unhandledRejection", (error) => {
   logger.error(`Unhandled promise rejection: ${error.message}`);
   console.error(error);
+  sendErrorLog(client, error, "Global: Unhandled Rejection");
 });
 
 process.on("uncaughtException", (error) => {
   logger.error(`Uncaught exception: ${error.message}`);
   console.error(error);
-  process.exit(1);
+  sendErrorLog(client, error, "Global: Uncaught Exception");
+  // Don't exit immediately so the error log has time to send
+  setTimeout(() => process.exit(1), 2000);
 });
 
 process.on("SIGINT", () => {

@@ -1,5 +1,6 @@
 const { MessageFlags } = require("discord.js");
 const logger = require("../utils/logger");
+const { sendErrorLog } = require("../utils/errorHandler");
 
 module.exports = {
   name: "interactionCreate",
@@ -22,6 +23,8 @@ module.exports = {
         logger.error(`Error executing /${interaction.commandName}: ${error.message}`);
         console.error(error);
 
+        await sendErrorLog(client, error, `Slash Command: /${interaction.commandName} (User: ${interaction.user.tag})`);
+
         const replyOptions = {
           content: "❌ There was an error executing this command!",
           flags: MessageFlags.Ephemeral,
@@ -43,19 +46,26 @@ module.exports = {
         await command.autocomplete(interaction, client);
       } catch (error) {
         logger.error(`Autocomplete error for /${interaction.commandName}: ${error.message}`);
+        await sendErrorLog(client, error, `Autocomplete: /${interaction.commandName}`);
       }
     }
 
-    if (interaction.isButton()) {
-      logger.debug(`Button clicked: ${interaction.customId} by ${interaction.user.tag}`);
-    }
+    // Wrapped interaction types in try/catch to capture V2 engine errors
+    try {
+        if (interaction.isButton()) {
+            logger.debug(`Button clicked: ${interaction.customId} by ${interaction.user.tag}`);
+        }
 
-    if (interaction.isStringSelectMenu()) {
-      logger.debug(`Select menu used: ${interaction.customId} by ${interaction.user.tag}`);
-    }
+        if (interaction.isStringSelectMenu()) {
+            logger.debug(`Select menu used: ${interaction.customId} by ${interaction.user.tag}`);
+        }
 
-    if (interaction.isModalSubmit()) {
-      logger.debug(`Modal submitted: ${interaction.customId} by ${interaction.user.tag}`);
+        if (interaction.isModalSubmit()) {
+            logger.debug(`Modal submitted: ${interaction.customId} by ${interaction.user.tag}`);
+        }
+    } catch (error) {
+        logger.error(`Interaction handler error: ${error.message}`);
+        await sendErrorLog(client, error, `Interaction: ${interaction.customId}`);
     }
   },
 };
