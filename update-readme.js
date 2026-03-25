@@ -1,4 +1,7 @@
-# ⚡  Axtonix Discord.js Template
+const fs = require('fs');
+const { execSync } = require('child_process');
+
+const readmeContent = `# ⚡  Axtonix Discord.js Template
 
 <div align="center">
 
@@ -27,25 +30,25 @@ Axtonix includes dual command systems, automatic slash syncing, powerful event h
 ### 1. Requirements
 
 - Node.js **18+**
-- Your preferred Node package manager (`npm`, `pnpm`, or `yarn`)
+- Your preferred Node package manager (\`npm\`, \`pnpm\`, or \`yarn\`)
 
 ### 2. Clone & Install
 
-```bash
+\`\`\`bash
 git clone https://github.com/rugved-danej/axtonix-discordjs-template.git
 cd axtonix-discordjs-template
-```
+\`\`\`
 
 **Install Dependencies:**
-- **npm:** `npm install`
-- **pnpm:** `pnpm install`
-- **yarn:** `yarn install`
+- **npm:** \`npm install\`
+- **pnpm:** \`pnpm install\`
+- **yarn:** \`yarn install\`
 
 ## 🔧 Configuration
 
 Edit the file configs/client.json:
 
-```json
+\`\`\`json
 {
   "token": "YOUR_DISCORD_BOT_TOKEN",
   "prefix": ".",
@@ -61,30 +64,30 @@ Edit the file configs/client.json:
   "allowedGuilds": ["YOUR_GUILD_ID"],
   "errorChannel": "YOUR_ERROR_CHANNEL_ID_HERE"
 }
-```
+\`\`\`
 
 > Make sure to enable Message Content Intent in the Discord Developer Portal.
 
 ## 🚀 Running the Bot
 
 **Development (auto-restart):**
-- **npm:** `npm run dev`
-- **pnpm:** `pnpm run dev`
-- **yarn:** `yarn dev`
+- **npm:** \`npm run dev\`
+- **pnpm:** \`pnpm run dev\`
+- **yarn:** \`yarn dev\`
 
 **Production:**
-- **npm:** `npm start`
-- **pnpm:** `pnpm start`
-- **yarn:** `yarn start`
+- **npm:** \`npm start\`
+- **pnpm:** \`pnpm start\`
+- **yarn:** \`yarn start\`
 
 **Production (Using PM2):**
-- **npm:** `npm run pm2:start`
-- **pnpm:** `pnpm run pm2:start`
-- **yarn:** `yarn pm2:start`
+- **npm:** \`npm run pm2:start\`
+- **pnpm:** \`pnpm run pm2:start\`
+- **yarn:** \`yarn pm2:start\`
 
 ## 📁 Project Structure
 
-```text
+\`\`\`text
 axtonix-discordjs-template/
 ├── commands/
 │   ├── normal/        # Prefix commands
@@ -95,7 +98,7 @@ axtonix-discordjs-template/
 ├── utils/             # Logger, color utils
 ├── ecosystem.config.js# PM2 configuration
 └── index.js           # Entry point
-```
+\`\`\`
 
 ## 🧩 Creating Commands
 
@@ -103,7 +106,7 @@ axtonix-discordjs-template/
 
 commands/slash/general/ping.js
 
-```javascript
+\`\`\`javascript
 const { SlashCommandBuilder } = require('discord.js');
 
 module.exports = {
@@ -114,13 +117,13 @@ module.exports = {
     await interaction.reply('Pong! 🏓');
   }
 };
-```
+\`\`\`
 
 ### Prefix Command Example
 
 commands/normal/general/ping.js
 
-```javascript
+\`\`\`javascript
 module.exports = {
   name: 'ping',
   description: 'Replies with Pong!',
@@ -128,7 +131,7 @@ module.exports = {
     message.reply('Pong! 🏓');
   }
 };
-```
+\`\`\`
 
 ## 🗄️ Database (MongoDB)
 
@@ -142,10 +145,10 @@ Exposes client.mongoose for schemas
 
 Add to your client.json:
 
-```json
+\`\`\`json
 "guildOnlyMode": true,
 "allowedGuilds": ["YOUR_GUILD_ID"]
-```
+\`\`\`
 
 The bot will:
 
@@ -160,3 +163,28 @@ Distributed under the ISC License.
 <div align="center">
 Made with ❤️ by <a href="https://github.com/rugved-danej">Rugved</a>
 </div>
+`;
+
+try {
+  console.log("📝 Writing updated README.md...");
+  fs.writeFileSync('README.md', readmeContent, 'utf8');
+  console.log("✅ README.md updated successfully.\n");
+
+  console.log("🚀 Staging README.md...");
+  execSync('git add .', { stdio: 'inherit' });
+  
+  console.log("\n🚀 Committing changes...");
+  execSync('git commit -m "docs: update README for multi-package manager and MongoDB Atlas support"', { stdio: 'inherit' });
+  
+  console.log("\n🚀 Pushing to GitHub...");
+  execSync('git push', { stdio: 'inherit' });
+
+  console.log("\n🎉 All done! Your repo is now up to date.");
+  
+  // Optionally delete the script after it runs so it doesn't clutter your repo
+  fs.unlinkSync('update-readme.js');
+  
+} catch (error) {
+  console.error("❌ An error occurred:", error.message);
+}
+

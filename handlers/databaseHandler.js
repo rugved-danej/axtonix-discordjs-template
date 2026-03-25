@@ -1,9 +1,9 @@
-const { createClient } = require("@supabase/supabase-js");
+const mongoose = require("mongoose");
 const logger = require("../utils/logger");
 const config = require("../configs/client.json");
 
 /**
- * Connects to the PostgreSQL database using Supabase.
+ * Connects to the MongoDB Atlas database using Mongoose.
  * @param {Client} client - The Discord.js client instance
  */
 async function connectDatabase(client) {
@@ -12,28 +12,36 @@ async function connectDatabase(client) {
     return;
   }
 
-  if (!config.database.supabaseUrl || config.database.supabaseUrl === "YOUR_SUPABASE_URL" || !config.database.supabaseKey) {
-    logger.error("Supabase URL or Key is missing or unconfigured in configs/client.json!");
+  if (!config.database.mongoUri || config.database.mongoUri === "YOUR_MONGODB_ATLAS_CONNECTION_STRING") {
+    logger.error("MongoDB URI is missing or unconfigured in configs/client.json!");
     return;
   }
 
-  logger.info("Attempting to initialize Supabase client...");
+  logger.info("Attempting to connect to MongoDB Atlas...");
 
   try {
-    // Initialize the Supabase client
-    const supabase = createClient(config.database.supabaseUrl, config.database.supabaseKey, {
-      auth: {
-        persistSession: false // Not needed for a backend bot
-      }
-    });
+    // Suppresses Mongoose 7+ strictQuery warnings
+    mongoose.set("strictQuery", false);
 
-    // Attach to the Discord client so it can be accessed in commands/events
-    client.supabase = supabase;
+    // Connect to MongoDB
+    await mongoose.connect(config.database.mongoUri);
 
-    logger.success("✅ Successfully initialized Supabase client!");
+    // Attach to the Discord client (matches your README documentation)
+    client.mongoose = mongoose;
+
+    logger.success("✅ Successfully connected to MongoDB Atlas!");
   } catch (error) {
-    logger.error(`❌ Supabase initialization failed: ${error.message}`);
+    logger.error(`❌ MongoDB connection failed: ${error.message}`);
   }
+
+  // Listen for database connection errors after the initial connection
+  mongoose.connection.on("error", (err) => {
+    logger.error(`MongoDB Runtime Error: ${err.message}`);
+  });
+
+  mongoose.connection.on("disconnected", () => {
+    logger.warn("⚠️ MongoDB disconnected!");
+  });
 }
 
 module.exports = { connectDatabase };

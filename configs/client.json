@@ -7,9 +7,9 @@
   "partials": ["Message", "Channel", "Reaction"],
   "database": {
     "enabled": true,
-    "supabaseUrl": "YOUR_SUPABASE_URL",
-    "supabaseKey": "YOUR_SUPABASE_KEY"
+    "mongoUri": "YOUR_MONGODB_ATLAS_CONNECTION_STRING"
   },
   "guildOnlyMode": false,
-  "allowedGuilds": ["YOUR_GUILD_ID"]
+  "allowedGuilds": ["YOUR_GUILD_ID"],
+  "errorChannel": "YOUR_ERROR_CHANNEL_ID_HERE"
 }
